@@ -2,24 +2,39 @@ div(ng-include='"components/navbar/navbar.html"')
 
 header#banner.hero-unit
   .container
-    h1 'Allo, 'Allo!
-    p.lead Kick-start your next web app with Angular Fullstack
-    img(src='assets/images/yeoman.png', alt='I\'m Yeoman')
+    h1 NightLIFE
+    p.lead Check out what's going on tonight!
 
 .container
   .row
     .col-lg-12
-      h1.page-header Features:
-      ul.nav.nav-tabs.nav-stacked.col-md-4.col-lg-4.col-sm-6(ng-repeat='thing in awesomeThings')
-        li
-          a(href='#', tooltip='{{thing.info}}')
-            | {{thing.name}}
-
+      h1.page-header Search Bars
+      form.form-inline(ng-submit="searchBars(location)")
+        div.input-group.col-xs-10
+          input.form-control(type="text",ng-model="location",placeholder="Where are you?")
+          span.input-group-btn
+            button.btn.btn-default(type="submit") Go!
+      div.loading(ng-show="loading")
+        i.fa.fa-cog
+          
+      div.list-group.col-xs-12
+        a.list-group-item(ng-repeat="bar in bars | orderBy:'-peopleGoing.length'")
+          h4.list-group-item-header {{bar.name}}
+          p.list-group-item-text <strong>{{ bar.peopleGoing.length }} going</strong>
+            br
+            button.btn(ng-click="setGoing(bar, true)", ng-show="isLoggedIn && bar.peopleGoing.indexOf(currentUser._id) === -1") I'm going!
+            button.btn(ng-click="setGoing(bar, false)", ng-show="isLoggedIn && bar.peopleGoing.indexOf(currentUser._id) > -1") I'm not going...
+          p.list-group-item-text(ng-show="bar.rating") <strong>Rating:</strong> {{ bar.rating }} ({{ bar.user_ratings_total }} ratings)
+          p.list-group-item-text(ng-hide="bar.rating") No ratings yet
+          p.list-group-item-text <strong>Address:</strong> {{ bar.formatted_address }}
+          p.list-group-item-text(ng-show="bar.reviews")
+            em.small "{{ bar.reviews[0].text }}"
+      
 footer.footer
   .container
     p
       | Angular Fullstack v2.1.1
       = ' | '
-      a(href='https://twitter.com/tyhenkel') @tyhenkel
+      | anj
       = ' | '
-      a(href='https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open') Issues
+      img(src='assets/images/google.png', alt='Powered by Google', height=15)

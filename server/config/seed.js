@@ -7,6 +7,7 @@
 
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
+var Bar = require('../api/bar/bar.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -44,6 +45,19 @@ User.find({}).remove(function() {
     password: 'admin'
   }, function() {
       console.log('finished populating users');
+    }
+  );
+});
+
+Bar.find({}).remove(function() {
+  Bar.create({
+    placeId: 'test2',
+    peopleGoing: ['fiafia511']
+  }, {
+    placeId: 'test1',
+    peopleGoing: ['haaga11', 'fiafia511', 'gooner1']
+  }, function() {
+      console.log('finished populating bars locally');
     }
   );
 });
