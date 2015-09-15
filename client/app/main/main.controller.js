@@ -2,27 +2,21 @@
 
 angular.module('nightlife2App')
   .controller('MainCtrl', function($scope, $http, Auth, gmapsFactory) {
-
-
-    var promise = gmapsFactory.getData()
-      .then(function(string) {
-        console.log(string);
-      }, function(error) {
-        console.error(error);
-      });
-
+    
     $scope.bars = [];
+    //var promise = gmapsFactory.getData()
+
+    //console.log(gmapsFactory.getData());
+    $scope.isLoggedIn = Auth.isLoggedIn;
+
     if (Auth.isLoggedIn()) {
-      $scope.isLoggedIn = true;
       $scope.currentUser = Auth.getCurrentUser();
       console.log('userid', $scope.currentUser._id);
-    } else {
-      $scope.isLoggedIn = false;
     }
 
     // * fix this and refactor HTML template
     $scope.userIsGoing = function(bar) {
-      return $scope.isLoggedIn && bar.peopleGoing.indexOf($scope.currentUser._id) > -1;
+      return Auth.isLoggedIn() && bar.peopleGoing.indexOf($scope.currentUser._id) > -1;
     };
 
     $scope.setGoing = function(bar, isGoing) {
@@ -62,7 +56,7 @@ angular.module('nightlife2App')
 
 
 
-    /* test data to simulate Google return */
+    /* test data to simulate Google return
     $scope.bars.push({
       name: 'Test Bar 1',
       place_id: 'test2',
@@ -87,22 +81,32 @@ angular.module('nightlife2App')
       user_ratings_total: 2,
       formatted_address: '151 Bug St, Testville Greater'
     });
-    /* end of test data */
+     end of test data */
 
 
-    // get bars with each place id, attach info to scope
-    // - this should be called after the bars list is downloaded fully
-    angular.forEach($scope.bars, function(bar) {
-      $http.get('/api/bars/p/' + bar.place_id).success(function(dbBar) {
-        // combine dbBar into bar (i.e. dbBar._id and dbBar.peopleGoing)
-        bar = _.merge(bar, dbBar);
-        //console.log(dbBar);
-        //console.log(bar);
-      });
-    });
+
 
     $scope.searchBars = function(location) {
-      console.log(location);
+      $scope.loading = true;
+      $scope.bars = [];
+      gmapsFactory.getData(location)
+        .then(function(data) {
+          $scope.loading = false;
+          //console.log(data);
+          $scope.bars = data;
+          // get bars with each place id, attach info to scope
+          // - this should be called after the bars list is downloaded fully
+          angular.forEach($scope.bars, function(bar) {
+            $http.get('/api/bars/p/' + bar.place_id).success(function(dbBar) {
+              // combine dbBar into bar (i.e. dbBar._id and dbBar.peopleGoing)
+              bar = _.merge(bar, dbBar);
+              //console.log(dbBar);
+              //console.log(bar);
+            });
+          });
+        }, function(error) {
+          console.error(error);
+        });
     };
 
     /*
