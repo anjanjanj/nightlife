@@ -1,19 +1,26 @@
 'use strict';
 
 angular.module('nightlife2App')
-  .controller('MainCtrl', function($scope, $http, Auth) {
+  .controller('MainCtrl', function($scope, $http, Auth, gmapsFactory) {
+
+
+    var promise = gmapsFactory.getData()
+      .then(function(string) {
+        console.log(string);
+      }, function(error) {
+        console.error(error);
+      });
 
     $scope.bars = [];
     if (Auth.isLoggedIn()) {
       $scope.isLoggedIn = true;
       $scope.currentUser = Auth.getCurrentUser();
       console.log('userid', $scope.currentUser._id);
-    }
-    else {
+    } else {
       $scope.isLoggedIn = false;
     }
 
-    // * fix this and refactor main page
+    // * fix this and refactor HTML template
     $scope.userIsGoing = function(bar) {
       return $scope.isLoggedIn && bar.peopleGoing.indexOf($scope.currentUser._id) > -1;
     };
@@ -23,12 +30,16 @@ angular.module('nightlife2App')
       //var userId = $scope.currentUser._id;
 
       // /api/bars/going/bar_id {isGoing: true/false}
-      $http.patch('/api/bars/going/'+bar._id, {isGoing: isGoing})
+      $http.patch('/api/bars/going/' + bar._id, {
+          isGoing: isGoing
+        })
         .then(function ok(response) {
-          console.log(response);
-          bar.peopleGoing = response.data.peopleGoing;
-        },
-        function err(response) {console.log(response);});
+            console.log(response);
+            bar.peopleGoing = response.data.peopleGoing;
+          },
+          function err(response) {
+            console.log(response);
+          });
 
       /*
       if (isGoing) {
@@ -82,7 +93,7 @@ angular.module('nightlife2App')
     // get bars with each place id, attach info to scope
     // - this should be called after the bars list is downloaded fully
     angular.forEach($scope.bars, function(bar) {
-      $http.get('/api/bars/p/'+bar.place_id).success(function(dbBar) {
+      $http.get('/api/bars/p/' + bar.place_id).success(function(dbBar) {
         // combine dbBar into bar (i.e. dbBar._id and dbBar.peopleGoing)
         bar = _.merge(bar, dbBar);
         //console.log(dbBar);
