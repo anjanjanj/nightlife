@@ -12,9 +12,9 @@ header#banner.hero-unit
 .container
   .row
     .col-lg-8.col-lg-offset-2
-      h1.page-header.text-center Search Bars and Nightspots
+      h3.page-header.text-center Search your city to find where other people are going out to!
       form.form-inline(ng-submit="searchBars(location)")
-        div.input-group.col-lg-12
+        .input-group.col-lg-12
           input.form-control(type="text",ng-model="location",placeholder="Where are you?")
           span.input-group-btn
             button.btn.btn-default(type="submit") Go!
@@ -23,16 +23,17 @@ header#banner.hero-unit
           i.fa.fa-spinner
       div.list-group.col-xs-12(ng-hide="loading")
         a.list-group-item(ng-repeat="bar in bars | orderBy:'-peopleGoing.length'")
-          h4.list-group-item-header {{bar.name}}
-          p.list-group-item-text <strong>{{ bar.peopleGoing.length }} going</strong>
-            br
-            button.btn(ng-click="setGoing(bar, true)", ng-show="!userIsGoing(bar)") I'm going!
-            button.btn(ng-click="setGoing(bar, false)", ng-show="userIsGoing(bar)") I'm not going...
-          p.list-group-item-text(ng-show="bar.rating") <strong>Rating:</strong> {{ bar.rating }}
-          p.list-group-item-text(ng-hide="bar.rating") No ratings yet
-          p.list-group-item-text <strong>Address:</strong> {{ bar.vicinity }}
-          p.list-group-item-text(ng-show="bar.reviews")
-            em.small "{{ bar.reviews[0].text }}"
+          table
+            tr
+              td
+                h4.list-group-item-header {{bar.name}}
+                p.list-group-item-text.lead <strong>{{ bar.peopleGoing.length }} going</strong>
+                p.list-group-item-text(ng-show="bar.rating") <strong>Rating:</strong> {{ bar.rating }}
+                p.list-group-item-text(ng-hide="bar.rating") No ratings yet
+                p.list-group-item-text <strong>Address:</strong> {{ bar.vicinity }}
+              td(style="width: 10%")
+                button.btn.btn-primary.btn-lg(ng-click="setGoing(bar, true)", ng-show="isLoggedIn() && bar.peopleGoing.indexOf(currentUser._id) === -1") I'm going!
+                button.btn.btn-warning.btn-lg(ng-click="setGoing(bar, false)", ng-show="isLoggedIn() && bar.peopleGoing.indexOf(currentUser._id) > -1") I'm not going...
       
 footer.footer
   .container

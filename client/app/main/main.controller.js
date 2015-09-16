@@ -2,7 +2,7 @@
 
 angular.module('nightlife2App')
   .controller('MainCtrl', function($scope, $http, Auth, gmapsFactory) {
-    
+
     $scope.bars = [];
     //var promise = gmapsFactory.getData()
 
@@ -11,12 +11,12 @@ angular.module('nightlife2App')
 
     if (Auth.isLoggedIn()) {
       $scope.currentUser = Auth.getCurrentUser();
-      console.log('userid', $scope.currentUser._id);
+      //console.log('userid', $scope.currentUser._id);
     }
 
     // * fix this and refactor HTML template
     $scope.userIsGoing = function(bar) {
-      return Auth.isLoggedIn() && bar.peopleGoing.indexOf($scope.currentUser._id) > -1;
+      return bar.peopleGoing.indexOf($scope.currentUser._id) > -1;
     };
 
     $scope.setGoing = function(bar, isGoing) {
@@ -28,11 +28,11 @@ angular.module('nightlife2App')
           isGoing: isGoing
         })
         .then(function ok(response) {
-            console.log(response);
+            //console.log(response);
             bar.peopleGoing = response.data.peopleGoing;
           },
           function err(response) {
-            console.log(response);
+            console.error(response);
           });
 
       /*
