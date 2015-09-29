@@ -73,7 +73,12 @@ exports.setGoing = function(req, res) {
 
     // user is going, add them to peopleGoing
     if (req.body.isGoing === true) {
-      if (bar.peopleGoing.indexOf(userId) > 0) { return res.status(400).send('User Already Exists'); }
+      //console.log(bar.peopleGoing);
+      //console.log(userId);
+      //console.log(bar.peopleGoing);
+      //console.log(userId);
+      //console.log("user going?", bar.peopleGoing.indexOf(userId));
+      if (bar.peopleGoing.indexOf(userId) > -1) { return res.status(400).send('User Already Exists'); }
       bar.peopleGoing.push(userId);
     }
     // user isn't going, remove them from peopleGoing

@@ -91,7 +91,6 @@ angular.module('nightlife2App')
       $scope.bars = [];
       gmapsFactory.getData(location)
         .then(function(data) {
-          $scope.loading = false;
           //console.log(data);
           $scope.bars = data;
           // get bars with each place id, attach info to scope
@@ -100,6 +99,7 @@ angular.module('nightlife2App')
             $http.get('/api/bars/p/' + bar.place_id).success(function(dbBar) {
               // combine dbBar into bar (i.e. dbBar._id and dbBar.peopleGoing)
               bar = _.merge(bar, dbBar);
+              $scope.loading = false;
               //console.log(dbBar);
               //console.log(bar);
             });
